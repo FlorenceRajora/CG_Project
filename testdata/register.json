@@ -1,0 +1,12 @@
+{
+    "firstName": "Florence",
+    "lastName": "Rajora",
+    "address": {
+        "street": "Krishna PG",
+        "city": "Jaipur",
+        "state": "Rajasthan",
+        "zipCode": "302019"
+    },
+    "phoneNumber": "123-456-7890",
+    "ssn": "943-421-4324"
+}

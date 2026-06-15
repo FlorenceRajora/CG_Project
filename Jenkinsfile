@@ -1,41 +1,41 @@
 pipeline {
-    agent any
+agent any
 
-    tools {
-        nodejs 'NodeJS_22'
-    }
+```
+tools {
+    nodejs 'NodeJS_22'
+}
 
-    stages {
+stages {
 
-        stage('Checkout') {
-            steps {
-                git branch: 'main',
-                url: 'https://github.com/FlorenceRajora/CG_Project.git'
-            }
-        }
-
-        stage('Install Dependencies') {
-            steps {
-                bat 'npm ci'
-            }
-        }
-
-        stage('Install Browsers') {
-            steps {
-                bat 'npx playwright install'
-            }
-        }
-
-        stage('Run Tests') {
-            steps {
-                bat 'npx playwright test'
-            }
+    stage('Install Dependencies') {
+        steps {
+            bat 'npm ci'
         }
     }
 
-    post {
-        always {
-            archiveArtifacts artifacts: 'playwright-report/**', allowEmptyArchive: true
+    stage('Install Playwright Browsers') {
+        steps {
+            bat 'npx playwright install chromium'
         }
     }
+
+    stage('Run Tests') {
+        steps {
+            bat 'npx playwright test'
+        }
+    }
+}
+
+post {
+    always {
+        allure(
+            includeProperties: false,
+            jdk: '',
+            results: [[path: 'allure-results']]
+        )
+    }
+}
+```
+
 }

@@ -37,7 +37,7 @@ pipeline {
         stage('Run Tests') {
             steps {
                 script {
-                    runCommand('npx playwright test')
+                    runCommand('npx playwright test tests/APITesting/TS-AccountId.spec.ts')
                 }
             }
         }

@@ -1,41 +1,52 @@
+def runCommand(command) {
+    if (isUnix()) {
+        sh command
+    } else {
+        bat command
+    }
+}
+
 pipeline {
-agent any
+    agent any
 
-```
-tools {
-    nodejs 'NodeJS_22'
-}
+    environment {
+        CI = 'true'
+    }
 
-stages {
+    stages {
+        stage('Install Dependencies') {
+            steps {
+                script {
+                    runCommand('npm ci')
+                }
+            }
+        }
 
-    stage('Install Dependencies') {
-        steps {
-            bat 'npm ci'
+        stage('Install Playwright Browser') {
+            steps {
+                script {
+                    if (isUnix()) {
+                        sh 'npx playwright install --with-deps chromium'
+                    } else {
+                        bat 'npx playwright install chromium'
+                    }
+                }
+            }
+        }
+
+        stage('Run Tests') {
+            steps {
+                script {
+                    runCommand('npx playwright test')
+                }
+            }
         }
     }
 
-    stage('Install Playwright Browsers') {
-        steps {
-            bat 'npx playwright install chromium'
-        }
-    }
-
-    stage('Run Tests') {
-        steps {
-            bat 'npx playwright test'
+    post {
+        always {
+            archiveArtifacts artifacts: 'playwright-report/**,allure-results/**,screenshots/**,test-results/**', allowEmptyArchive: true
         }
     }
 }
 
-post {
-    always {
-        allure(
-            includeProperties: false,
-            jdk: '',
-            results: [[path: 'allure-results']]
-        )
-    }
-}
-```
-
-}
